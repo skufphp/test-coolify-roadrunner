@@ -37,7 +37,7 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - postgres-data-test:/var/lib/postgresql
+      - postgres-data:/var/lib/postgresql
     networks:
       - laravel-roadrunner-network
     healthcheck:
@@ -100,7 +100,7 @@ services:
         condition: service_healthy
 
 volumes:
-  postgres-data-test:
+  postgres-data:
   redis-data:
 
 networks:
