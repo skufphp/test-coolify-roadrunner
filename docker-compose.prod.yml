@@ -8,6 +8,9 @@ services:
     image: laravel-roadrunner:latest
     pull_policy: never
     restart: unless-stopped
+    environment:
+      APP_KEY: ${APP_KEY}
+      APP_BASE_PATH: ${APP_BASE_PATH}
     working_dir: /var/www/laravel
     command: [ "rr", "serve", "-c", "/var/www/laravel/.rr.yaml" ]
     networks:
@@ -68,6 +71,9 @@ services:
     image: laravel-roadrunner:latest
     pull_policy: never
     restart: unless-stopped
+    environment:
+      APP_KEY: ${APP_KEY}
+      APP_BASE_PATH: ${APP_BASE_PATH}
     working_dir: /var/www/laravel
     command: [ "php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600", "--memory=256", "--max-jobs=1000" ]
     networks:
@@ -89,6 +95,9 @@ services:
     image: laravel-roadrunner:latest
     pull_policy: never
     restart: unless-stopped
+    environment:
+      APP_KEY: ${APP_KEY}
+      APP_BASE_PATH: ${APP_BASE_PATH}
     working_dir: /var/www/laravel
     command: [ "sh", "-c", "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done" ]
     networks:
