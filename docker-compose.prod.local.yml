@@ -14,7 +14,12 @@ services:
       APP_KEY: ${APP_KEY}
       APP_BASE_PATH: ${APP_BASE_PATH}
     working_dir: /var/www/laravel
-    command: [ "rr", "serve", "-c", "/var/www/laravel/.rr.yaml" ]
+    command: >
+      sh -c "
+        php artisan migrate --force &&
+        php artisan optimize:clear &&
+        rr serve -c /var/www/laravel/.rr.yaml -w /var/www/laravel
+      "
     ports:
       - "${APP_PORT:-8050}:8000"
     networks:
