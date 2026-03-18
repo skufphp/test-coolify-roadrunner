@@ -432,13 +432,13 @@
 
                     <!-- Comparison -->
                     <div class="section">
-                        <div class="section-title">RoadRunner vs Nginx + PHP-FPM</div>
+                        <div class="section-title">Nginx + PHP-FPM vs RoadRunner</div>
                         <table class="compare-table">
                             <thead>
                                 <tr>
                                     <th>Аспект</th>
                                     <th>Nginx + PHP-FPM</th>
-                                    <th>RoadRunner</th>
+                                    <th class="highlight">RoadRunner</th>
                                 </tr>
                             </thead>
                             <tbody>
