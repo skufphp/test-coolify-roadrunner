@@ -1,133 +1,58 @@
-# Laravel Octane + RoadRunner — Docker Boilerplate
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-Boilerplate для быстрого развертывания **Laravel Octane** на **RoadRunner** в Docker.
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-## Архитектура
+## About Laravel
 
-```
-┌─────────────────────────────────────────────────┐
-│              Docker Compose                      │
-│                                                  │
-│  ┌──────────────────────┐   ┌────────────────┐  │
-│  │  RoadRunner (PHP 8.5) │   │  PostgreSQL    │  │
-│  │  Laravel Octane       │   │  18.2 Alpine   │  │
-│  │  :8000 HTTP           │   │  :5432         │  │
-│  │  :2114 Health Check   │   └────────────────┘  │
-│  └──────────────────────┘                        │
-│                              ┌────────────────┐  │
-│  ┌──────────────────────┐   │  Redis          │  │
-│  │  Node.js (dev only)  │   │  8.6 Alpine     │  │
-│  │  Vite HMR :5173      │   │  :6379          │  │
-│  └──────────────────────┘   └────────────────┘  │
-│                                                  │
-│  ┌──────────────────────┐                        │
-│  │  pgAdmin (dev only)  │                        │
-│  │  :8080               │                        │
-│  └──────────────────────┘                        │
-└─────────────────────────────────────────────────┘
-```
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-## Ключевые отличия от Nginx + PHP-FPM
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-| Аспект             | Nginx + PHP-FPM       | RoadRunner (Octane)                      |
-|--------------------|-----------------------|------------------------------------------|
-| Контейнеры         | 2 (Nginx + PHP-FPM)   | 1 (RoadRunner)                           |
-| Протокол           | Unix socket / FastCGI | Встроенный HTTP-сервер                   |
-| Модель             | Процесс на запрос     | Persistent workers                       |
-| Производительность | Хорошая               | Высокая (нет bootstrap на каждый запрос) |
-| Статика            | Nginx                 | RoadRunner static plugin                 |
-| Перезагрузка кода  | Автоматическая        | `make rr-reload` или `rr reset`          |
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Структура проекта (файлы boilerplate)
+## Learning Laravel
 
-```
-├── docker/
-│   ├── php.Dockerfile          # Многоэтапный образ (dev + production)
-│   └── php/
-│       ├── php.ini             # Настройки PHP для разработки
-│       └── php.prod.ini        # Настройки PHP для продакшена
-├── .rr.yaml                    # Конфигурация RoadRunner
-├── docker-compose.yml          # Разработка (app, node, postgres, redis, queue, scheduler, pgadmin)
-├── docker-compose.prod.yml     # Продакшен-стек (app, postgres, redis, queue, scheduler)
-├── docker-compose.prod.local.yml # Локальный запуск production-стека через .env.production
-├── .dockerignore               # Исключения из контекста сборки
-├── .env.docker                 # Шаблон переменных окружения для Docker
-├── .env.production.example     # Шаблон переменных для production/локального prod-запуска
-├── Makefile                    # Команды управления проектом
-└── SETUP.md                    # Подробная инструкция по установке
-```
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-## Быстрый старт
+In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+
+You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+
+## Agentic Development
+
+Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
 
 ```bash
-# 1. Создайте Laravel проект
-composer create-project laravel/laravel my-app
+composer require laravel/boost --dev
 
-# 2. Установите Laravel Octane
-cd my-app
-composer require laravel/octane
-php artisan octane:install --server=roadrunner
-
-# 3. Скопируйте файлы boilerplate в проект
-# (docker/, docker-compose*.yml, Makefile, .rr.yaml, .dockerignore, .env.production.example)
-
-# 4. Настройте .env (см. SETUP.md)
-# Важно для Redis:
-# SESSION_DRIVER=redis
-# CACHE_STORE=redis
-# QUEUE_CONNECTION=redis
-# REDIS_CLIENT=phpredis
-
-# 5. Запустите
-make setup
+php artisan boost:install
 ```
 
-Подробная инструкция — в файле **[SETUP.md](SETUP.md)**.
+Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
 
-## Локальный запуск production-стека
+## Contributing
 
-```bash
-cp .env.production.example .env.production
-make up-prod
-```
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-`make up-prod` использует `--env-file .env.production` и `docker-compose.prod.local.yml`.
+## Code of Conduct
 
-## Coolify
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-Пошаговый деплой для Coolify описан в **[SETUP.md](SETUP.md)** (раздел `Развертывание в Coolify`): перенос всех переменных из `.env.production` в `Production` и `Preview` секции, изоляция preview-БД и `Post-deployment` команда для миграций.
+## Security Vulnerabilities
 
-## Основные команды
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-| Команда                  | Описание                         |
-|--------------------------|----------------------------------|
-| `make setup`             | Полная инициализация проекта     |
-| `make up`                | Запустить контейнеры (dev)       |
-| `make up-prod`           | Запустить контейнеры (prod local)|
-| `make down`              | Остановить контейнеры            |
-| `make down-prod`         | Остановить контейнеры (prod local)|
-| `make logs`              | Логи всех сервисов (dev)         |
-| `make logs-prod`         | Логи всех сервисов (prod local)  |
-| `make logs-app`          | Логи RoadRunner                  |
-| `make logs-app-prod`     | Логи RoadRunner (prod local)     |
-| `make logs-postgres`     | Логи PostgreSQL (dev)            |
-| `make logs-postgres-prod`| Логи PostgreSQL (prod local)     |
-| `make logs-redis`        | Логи Redis (dev)                 |
-| `make logs-redis-prod`   | Логи Redis (prod local)          |
-| `make logs-queue`        | Логи queue worker (dev)          |
-| `make logs-queue-prod`   | Логи queue worker (prod local)   |
-| `make logs-scheduler`    | Логи scheduler (dev)             |
-| `make logs-scheduler-prod`| Логи scheduler (prod local)     |
-| `make shell`             | Войти в контейнер                |
-| `make shell-prod`        | Войти в app-контейнер (prod local)|
-| `make shell-postgres`    | PostgreSQL CLI (dev)             |
-| `make shell-postgres-prod`| PostgreSQL CLI (prod local)     |
-| `make shell-redis`       | Redis CLI (dev)                  |
-| `make shell-redis-prod`  | Redis CLI (prod local)           |
-| `make shell-queue-prod`  | Shell queue worker (prod local)  |
-| `make shell-scheduler-prod`| Shell scheduler (prod local)   |
-| `make rr-reload`         | Перезагрузить воркеры RoadRunner |
-| `make rr-workers`        | Статус воркеров                  |
-| `make artisan CMD="..."` | Выполнить artisan-команду        |
-| `make test-php`          | Запустить тесты                  |
-| `make help`              | Полный список команд             |
+## License
+
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

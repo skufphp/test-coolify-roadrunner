@@ -88,6 +88,8 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
     volumes:
       - postgres-data:/var/lib/postgresql
     networks:
@@ -104,13 +106,13 @@ services:
     image: redis:8.6-alpine
     container_name: laravel-redis-rr
     restart: unless-stopped
-    command: [ "redis-server", "--appendonly", "yes" ]
+    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-}" ]
     volumes:
       - redis-data:/data
     networks:
       - laravel-roadrunner-network
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: [ "CMD", "sh", "-c", "redis-cli -a \"${REDIS_PASSWORD:-}\" ping || redis-cli ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
