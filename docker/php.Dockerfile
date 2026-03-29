@@ -16,7 +16,6 @@
 # ==============================================================================
 
 FROM node:24-alpine AS frontend-build
-
 WORKDIR /app
 
 # Ставим зависимости фронта отдельно для лучшего кеширования
@@ -26,6 +25,7 @@ RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 # Копируем проект и собираем ассеты
 COPY . ./
 RUN npm run build
+
 
 # ==============================================================================
 # Базовая среда PHP с RoadRunner — только общая база для всех окружений
@@ -91,8 +91,12 @@ FROM php-base AS development
 ARG INSTALL_XDEBUG=false
 RUN set -eux; \
     if [ "${INSTALL_XDEBUG}" = "true" ]; then \
+      apk add --no-cache --virtual .xdebug-build-deps \
+        $PHPIZE_DEPS \
+        linux-headers; \
       pie install xdebug/xdebug; \
       docker-php-ext-enable xdebug; \
+      apk del .xdebug-build-deps; \
     fi
 
 # Конфигурация php.ini для разработки

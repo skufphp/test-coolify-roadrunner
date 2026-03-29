@@ -57,8 +57,8 @@ services:
     working_dir: /var/www/laravel
     command: >
       sh -c "
-        php artisan migrate --force &&
         php artisan optimize:clear &&
+        php artisan migrate --force &&
         rr serve -c /var/www/laravel/.rr.yaml -w /var/www/laravel
       "
     networks:
@@ -131,6 +131,8 @@ services:
     networks:
       - laravel-roadrunner-network
     depends_on:
+      laravel-roadrunner:
+        condition: service_started
       laravel-postgres-rr:
         condition: service_healthy
       laravel-redis-rr:
@@ -155,6 +157,8 @@ services:
     networks:
       - laravel-roadrunner-network
     depends_on:
+      laravel-roadrunner:
+        condition: service_started
       laravel-postgres-rr:
         condition: service_healthy
       laravel-redis-rr:
